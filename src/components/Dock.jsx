@@ -4,8 +4,10 @@ import {dockApps} from "#/constants/index.js";
 import { Tooltip} from "react-tooltip";
 import {useGSAP} from "@gsap/react";
 import gsap from "gsap";
+import useWindowStore from "#/store/window.js";
 
 const Dock = () => {
+    const { openWindow , closeWindow, windows } = useWindowStore()
     const dockRef = useRef(null);
 
     useGSAP( () => {
@@ -30,7 +32,7 @@ const Dock = () => {
             });
         };
 
-        const handleMousmove = (e) => {
+        const handleMousemove = (e) => {
             const {left} = dock.getBoundingClientRect();
 
             animateIcons(e.clientX - left);
@@ -39,11 +41,11 @@ const Dock = () => {
 const resetIcons = () => icons.forEach((icon) => gsap.to(icon, {
     scale: 1, y: 0, duration: 0.3, ease: "power1.out",
         }));
-        dock.addEventListener("mousemove", handleMousmove);
+        dock.addEventListener("mousemove", handleMousemove);
         dock.addEventListener("mouseLeave", resetIcons);
 
         return () => {
-            dock.removeEventListener("mousemove", handleMousmove);
+            dock.removeEventListener("mousemove", handleMousemove);
             dock.removeEventListener("mouseLeave", resetIcons);
         }
     }, []);
@@ -51,8 +53,17 @@ const resetIcons = () => icons.forEach((icon) => gsap.to(icon, {
 
 
     const toggleApp = (app) => {
-        //To Implement open window logic
-    }
+       if(!app.canOpen) return;
+       const  window = windows[app.id];
+
+       if(window.isOpen){
+           closeWindow(app.id);
+       }else{
+           openWindow(app.id);
+       }
+       console.log(windows);
+    };
+
     return <section id="dock" >
         <div ref={dockRef} className="dock-container">
             {dockApps.map(({id, name, icon, canOpen})  => (
