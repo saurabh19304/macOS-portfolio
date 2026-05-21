@@ -22,7 +22,10 @@ const Resume = () => {
                 </a>
             </div>
             <Document file="/files/Saurabh_tiwari(1).pdf">
-                <Page pageNumber={1} />
+                <Page pageNumber={1}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                />
             </Document>
         </>
     );
